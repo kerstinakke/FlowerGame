@@ -15,7 +15,7 @@ public class Petal_props : MonoBehaviour
         mat.color = petal_color;
         transform.localScale = new Vector3(width,1,0.05f);
         transform.localRotation = Quaternion.Euler(angle);
-        transform.position -= transform.up*0.5f;
+        transform.localPosition -= transform.up*0.5f;
     }
 
 }
