@@ -5,24 +5,25 @@ using UnityEngine;
 public class Flowerer : MonoBehaviour
 {
     public Color color;
-    public int petal_num=3;
-    public float height=1;
+    public int petalNum = 3;
+    public float height = 1;
     [SerializeField]
     private GameObject petal;
     [SerializeField]
     private GameObject stem;
+    public bool adult { get; set; } = false;
 
     // Start is called before the first frame update
     void Start()
     {
         // add petals
-        float angle = 360 / petal_num;
-        float width = 3f / petal_num;
+        float angle = 360 / petalNum;
+        float width = 3f / petalNum;
         Transform petals = transform.Find("petals");        
-        for (int i = 0; i < petal_num; i++) {
+        for (int i = 0; i < petalNum; i++) {
             GameObject p = Instantiate(petal,petals);
-            Petal_props properties = p.GetComponent<Petal_props>();
-            properties.petal_color = color;
+            PetalProps properties = p.GetComponent<PetalProps>();
+            properties.petalColor = color;
             properties.angle = new Vector3(0, 0, angle*i);
             properties.width = width;
         }
@@ -30,9 +31,16 @@ public class Flowerer : MonoBehaviour
 
         // add stem
         GameObject s = Instantiate(stem, transform);
-        s.GetComponent<Stem_props>().height = height;
-        transform.position += transform.up * height;
+        s.GetComponent<StemProps>().height = height;
+        transform.localPosition += transform.up * (height+(height*transform.parent.localScale.y-height)/2);
+
     }
 
+    public void Randomize() {
+        color = new Color(Random.Range(0,255)/255f, Random.Range(0, 255)/255f, Random.Range(0, 255)/255f);
+        height = Random.Range(8, 20) / 8f;
+        petalNum = Random.Range(3, 9);
+    }
 
+    
 }
