@@ -8,6 +8,10 @@ public class ControlInterface : MonoBehaviour
     public int m = 3;
     [SerializeField]
     private GameObject flowerPrefab;
+    [SerializeField]
+    private Texture2D crosserCursor;
+    [SerializeField]
+    private Texture2D mutaterCursor;
 
     private enum Tools { None, Mutater, Crosser, Selecter };
     [SerializeField]
@@ -18,6 +22,7 @@ public class ControlInterface : MonoBehaviour
     private Queue<int> empty = new Queue<int>();
     private Flowerer firstCrossover;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,7 +32,7 @@ public class ControlInterface : MonoBehaviour
         // create and fill n big pots
         float z = cam.nearClipPlane +5;
         Vector3 rightBound = cam.ViewportToWorldPoint(new Vector3(0.9f, 0.6f, z));
-        Vector3 leftBound = cam.ViewportToWorldPoint(new Vector3(0.1f, 0.6f, z));
+        Vector3 leftBound = cam.ViewportToWorldPoint(new Vector3(0.25f, 0.6f, z));
         float step = (rightBound.x - leftBound.x) / (n-1);
         for (int i = 0; i < n; i++) {
             GameObject flowerpot = new GameObject("big pot" + i);
@@ -115,6 +120,7 @@ public class ControlInterface : MonoBehaviour
     public void ActivateMutater() {
         activeTool = Tools.Mutater;
         print("mutating tool active");
+        Cursor.SetCursor(mutaterCursor, new Vector2(0.1f, 0), CursorMode.Auto);
     }
 
     public void ActivateCrosser()
@@ -122,6 +128,7 @@ public class ControlInterface : MonoBehaviour
         firstCrossover = null;
         activeTool = Tools.Crosser;
         print("crossover tool active");
+        Cursor.SetCursor(crosserCursor,new Vector2(0,0),CursorMode.Auto);
     }
 
     public void ActivateSelecter()
