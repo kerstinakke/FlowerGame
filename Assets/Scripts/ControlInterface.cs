@@ -11,7 +11,7 @@ public class ControlInterface : MonoBehaviour
     [SerializeField]
     private Texture2D crosserCursor;
     [SerializeField]
-    private Texture2D mutaterCursor;
+    private Texture2D mutaterSprite;
 
     private enum Tools { None, Mutater, Crosser, Selecter };
     [SerializeField]
@@ -120,7 +120,7 @@ public class ControlInterface : MonoBehaviour
     public void ActivateMutater() {
         activeTool = Tools.Mutater;
         print("mutating tool active");
-        Cursor.SetCursor(mutaterCursor, new Vector2(0.1f, 0), CursorMode.Auto);
+        Cursor.SetCursor(mutaterSprite, new Vector2(0.1f, 0), CursorMode.Auto);
     }
 
     public void ActivateCrosser()
