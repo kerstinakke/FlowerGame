@@ -87,7 +87,7 @@ public class ControlInterface : MonoBehaviour
                         GameObject offspring = Instantiate(flowerPrefab, smallPots[freePot].transform, false);
                         print("mutating flower in " + flower.transform.parent.name);
                         // ---- TODO set mutant offspring parameters 
-                        offspring.GetComponent<Flowerer>().Randomize();
+                        offspring.GetComponent<Flowerer>().mutateFrom(flower.GetComponent<Flowerer>());
                         // ----
                     }
                 }
@@ -106,9 +106,7 @@ public class ControlInterface : MonoBehaviour
                         int freePot = empty.Dequeue();
                         GameObject offspring = Instantiate(flowerPrefab, smallPots[freePot].transform, false);
                         print("crossing flowers in " + flower.transform.parent.name + " and " + firstCrossover.transform.parent.name);
-                        // ---- TODO set crossover offspring parameters 
-                        offspring.GetComponent<Flowerer>().Randomize();
-                        // ----
+                        offspring.GetComponent<Flowerer>().crossoverFrom(flower.GetComponent<Flowerer>(), firstCrossover.GetComponent<Flowerer>());
                         firstCrossover = null;
                     }
                     else print("can't cross flower with itself");

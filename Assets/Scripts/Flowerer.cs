@@ -4,9 +4,22 @@ using UnityEngine;
 
 public class Flowerer : MonoBehaviour
 {
-    public Color color;
-    public int petalNum = 3;
-    public float height = 1;
+    private GeneCombiner.Gene redGene, blueGene, greenGene, petalGene, heightGene;
+    public Color getColor() 
+    {
+        return new Color (redGene.popCount() / 12f, blueGene.popCount() / 12f, greenGene.popCount() / 12f);
+    }
+    
+    public int getPetalNum()
+    {
+        return 3 + petalGene.popCount();
+    }
+    
+    public float getHeight()
+    {
+        return (8 + heightGene.popCount()) / 8f;
+    }
+    
     [SerializeField]
     private GameObject petal;
     [SerializeField]
@@ -17,30 +30,49 @@ public class Flowerer : MonoBehaviour
     void Start()
     {
         // add petals
-        float angle = 360 / petalNum;
-        float width = 3f / petalNum;
+        float angle = 360 / getPetalNum();
+        float width = 3f / getPetalNum();
         Transform petals = transform.Find("petals");        
-        for (int i = 0; i < petalNum; i++) {
+        for (int i = 0; i < getPetalNum(); i++) {
             GameObject p = Instantiate(petal,petals);
             PetalProps properties = p.GetComponent<PetalProps>();
-            properties.petalColor = color;
+            properties.petalColor = getColor();
             properties.angle = new Vector3(0, 0, angle*i);
             properties.width = width;
         }
-        petals.localScale = (new Vector3(1, 1, 1)) * height / 3;
+        petals.localScale = (new Vector3(1, 1, 1)) * getHeight() / 3;
 
         // add stem
         GameObject s = Instantiate(stem, transform);
-        s.GetComponent<StemProps>().height = height;
-        transform.localPosition += transform.up * (height+(height*transform.parent.localScale.y-height)/2);
+        s.GetComponent<StemProps>().height = getHeight();
+        transform.localPosition += transform.up * (getHeight()+(getHeight()*transform.parent.localScale.y-getHeight())/2);
 
     }
 
-    public void Randomize() {
-        color = new Color(Random.Range(0,255)/255f, Random.Range(0, 255)/255f, Random.Range(0, 255)/255f);
-        height = Random.Range(8, 20) / 8f;
-        petalNum = Random.Range(3, 9);
+    public void Randomize() 
+    {
+        redGene = GeneCombiner.randomGene();
+        blueGene = GeneCombiner.randomGene();
+        greenGene = GeneCombiner.randomGene();
+        heightGene = GeneCombiner.randomGene();
+        petalGene = GeneCombiner.randomGene();
     }
 
+    public void crossoverFrom(Flowerer p, Flowerer q)
+    {
+        redGene = GeneCombiner.cross(p.redGene, q.redGene);
+        blueGene = GeneCombiner.cross(p.blueGene, q.blueGene);
+        greenGene = GeneCombiner.cross(p.greenGene, q.greenGene);
+        heightGene = GeneCombiner.cross(p.heightGene, q.heightGene);
+        petalGene = GeneCombiner.cross(p.petalGene, q.petalGene);
+    }
     
+    public void mutateFrom(Flowerer p)
+    {
+        redGene = GeneCombiner.mutate(p.redGene);
+        blueGene = GeneCombiner.mutate(p.blueGene);
+        greenGene = GeneCombiner.mutate(p.greenGene);
+        heightGene = GeneCombiner.mutate(p.heightGene);
+        petalGene = GeneCombiner.mutate(p.petalGene);
+    }
 }
