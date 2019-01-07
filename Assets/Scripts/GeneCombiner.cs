@@ -49,7 +49,7 @@ public class GeneCombiner {
         return result;
     }
 
-    const double FLIP_PROB = 0.3f;
+    const double FLIP_PROB = 0.2f;
     public static Gene mutate(Gene p)
     {
         Gene result = new Gene();

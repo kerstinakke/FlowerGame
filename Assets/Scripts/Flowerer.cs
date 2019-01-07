@@ -71,19 +71,35 @@ public class Flowerer : MonoBehaviour
     
     public void MutateFrom(Flowerer p)
     {
-        redGene = GeneCombiner.mutate(p.redGene);
-        blueGene = GeneCombiner.mutate(p.blueGene);
-        greenGene = GeneCombiner.mutate(p.greenGene);
-        heightGene = GeneCombiner.mutate(p.heightGene);
-        petalGene = GeneCombiner.mutate(p.petalGene);
+        CopyFrom(p);
+        
+        System.Random rng = new System.Random();
+        int changedGene = rng.Next(0, 5);
+        switch (changedGene) {
+            case 0:
+                redGene = GeneCombiner.mutate(p.redGene);
+                break;
+            case 1:
+                blueGene = GeneCombiner.mutate(p.blueGene);
+                break;
+            case 2:
+                greenGene = GeneCombiner.mutate(p.greenGene);
+                break;
+            case 3:
+                heightGene = GeneCombiner.mutate(p.heightGene);
+                break;
+            case 4:
+                petalGene = GeneCombiner.mutate(p.petalGene);
+                break;
+        }
     }
 
     public void CopyFrom(Flowerer original) {
         redGene = original.redGene;
         blueGene = original.blueGene;
-        greenGene =original.greenGene;
+        greenGene = original.greenGene;
         heightGene = original.heightGene;
-        petalGene =original.petalGene;
+        petalGene = original.petalGene;
     }
 
     public void Transparent(bool setTransparent) {
