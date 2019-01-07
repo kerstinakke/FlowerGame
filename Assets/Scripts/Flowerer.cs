@@ -25,6 +25,7 @@ public class Flowerer : MonoBehaviour
     [SerializeField]
     private GameObject stem;
     public bool adult { get; set; } = false;
+    public bool selected = false;
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +41,7 @@ public class Flowerer : MonoBehaviour
             properties.angle = new Vector3(0, 0, angle*i);
             properties.width = width;
         }
+        
         petals.localScale = (new Vector3(1, 1, 1)) * getHeight() / 3;
 
         // add stem
@@ -58,7 +60,7 @@ public class Flowerer : MonoBehaviour
         petalGene = GeneCombiner.randomGene();
     }
 
-    public void crossoverFrom(Flowerer p, Flowerer q)
+    public void CrossoverFrom(Flowerer p, Flowerer q)
     {
         redGene = GeneCombiner.cross(p.redGene, q.redGene);
         blueGene = GeneCombiner.cross(p.blueGene, q.blueGene);
@@ -67,12 +69,34 @@ public class Flowerer : MonoBehaviour
         petalGene = GeneCombiner.cross(p.petalGene, q.petalGene);
     }
     
-    public void mutateFrom(Flowerer p)
+    public void MutateFrom(Flowerer p)
     {
         redGene = GeneCombiner.mutate(p.redGene);
         blueGene = GeneCombiner.mutate(p.blueGene);
         greenGene = GeneCombiner.mutate(p.greenGene);
         heightGene = GeneCombiner.mutate(p.heightGene);
         petalGene = GeneCombiner.mutate(p.petalGene);
+    }
+
+    public void CopyFrom(Flowerer original) {
+        redGene = original.redGene;
+        blueGene = original.blueGene;
+        greenGene =original.greenGene;
+        heightGene = original.heightGene;
+        petalGene =original.petalGene;
+    }
+
+    public void Transparent(bool setTransparent) {
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
+        {
+            Color c = r.material.color;
+            r.material.color = new Color(c.r, c.g, c.b, setTransparent ? 0.05f : 1f );
+        }       
+    }
+
+    public void Reset()
+    {
+        Transparent(false);
+        selected = false;
     }
 }

@@ -75,11 +75,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e8197f6cfe8f44429c5e44869445d69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.30588233, g: 0.45191383, b: 1, a: 1}
-  petalNum: 3
-  height: 1
   petal: {fileID: 1103782958249282985, guid: 993e156850cab704a880c12e562876c1, type: 3}
   stem: {fileID: 7001994529236937329, guid: 496bca1a53e47784ba557aba52d6b638, type: 3}
+  selected: 0
 --- !u!1 &8632322169014481783
 GameObject:
   m_ObjectHideFlags: 0
