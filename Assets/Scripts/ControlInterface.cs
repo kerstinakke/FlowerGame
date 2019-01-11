@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ControlInterface : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class ControlInterface : MonoBehaviour
     private Queue<int> empty = new Queue<int>();
     private Flowerer firstCrossover;
     private int selected = 0;
+    private Text messages;
     
 
     // Start is called before the first frame update
@@ -31,6 +33,8 @@ public class ControlInterface : MonoBehaviour
     {
         activeTool = Tools.None;
         cam = GetComponent<Camera>();
+        messages = GameObject.FindGameObjectWithTag("MessageScreen").GetComponent<Text>();
+        messages.text = "";
 
         // create and fill n big pots
         float z = cam.nearClipPlane +5;
@@ -71,6 +75,7 @@ public class ControlInterface : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
+                messages.text = "";
                 if (activeTool == Tools.None) {
                     print("no tool selected");
                     return;
@@ -85,7 +90,8 @@ public class ControlInterface : MonoBehaviour
                 // create mutated offspring
                 if (activeTool == Tools.Mutater)
                 {
-                    if (empty.Count == 0 || flower.adult == false) print("can't mutate");
+                    if (empty.Count == 0) messages.text = "No more room";
+                    else if (!flower.adult) messages.text = "This flower can not give offspring yet";
                     else
                     {
                         int freePot = empty.Dequeue();
@@ -99,7 +105,8 @@ public class ControlInterface : MonoBehaviour
                 // create crossover offspring
                 else if (activeTool == Tools.Crosser)
                 {
-                    if (empty.Count == 0 || !flower.adult) print("can't crossover");
+                    if (empty.Count == 0) messages.text = "No more room";
+                    else if (!flower.adult) messages.text = "This flower can not give offspring yet";
                     else if (firstCrossover == null)
                     {
                         firstCrossover = flower;
@@ -115,7 +122,7 @@ public class ControlInterface : MonoBehaviour
                         smallPots[freePot].SetLabel(newLabel);
                         firstCrossover = null;
                     }
-                    else print("can't cross flower with itself");
+                    else messages.text = "Can't cross flower with itself";
                 }
                 else if (activeTool == Tools.Selecter) {
                     if (selected < n && !flower.selected)
@@ -129,7 +136,7 @@ public class ControlInterface : MonoBehaviour
                         selected -= 1;
                         flower.Transparent(false);
                     }
-                    else print("selection limit reached or flower already selected");
+                    else messages.text = "Selection limit reached";
                 }
             }
         }
