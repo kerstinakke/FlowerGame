@@ -9,6 +9,8 @@ public class ControlInterface : MonoBehaviour
     [SerializeField]
     private GameObject flowerPrefab;
     [SerializeField]
+    private GameObject potPrefab;
+    [SerializeField]
     private Texture2D crosserCursor;
     [SerializeField]
     private Texture2D mutaterSprite;
@@ -17,8 +19,8 @@ public class ControlInterface : MonoBehaviour
     [SerializeField]
     private Tools activeTool = Tools.None;
     private Camera cam;
-    private List<GameObject> bigPots = new List<GameObject>();
-    private List<GameObject> smallPots = new List<GameObject>();
+    private List<PotLabel> bigPots = new List<PotLabel>();
+    private List<PotLabel> smallPots = new List<PotLabel>();
     private Queue<int> empty = new Queue<int>();
     private Flowerer firstCrossover;
     private int selected = 0;
@@ -36,14 +38,16 @@ public class ControlInterface : MonoBehaviour
         Vector3 leftBound = cam.ViewportToWorldPoint(new Vector3(0.25f, 0.6f, z));
         float step = (rightBound.x - leftBound.x) / (n-1);
         for (int i = 0; i < n; i++) {
-            GameObject flowerpot = new GameObject("big pot" + i);
-            flowerpot.transform.position = leftBound + new Vector3(step * i, 0);
-            bigPots.Add(flowerpot);
+            GameObject flowerpot = Instantiate(potPrefab, leftBound + new Vector3(step * i, 0),Quaternion.identity);
+            flowerpot.name = ""+(i+1);
+            flowerpot.GetComponent<PotLabel>().SetLabel("" + (i + 1));
+            bigPots.Add(flowerpot.GetComponent<PotLabel>());
             GameObject flower = Instantiate(flowerPrefab,flowerpot.transform,false);
             Flowerer flowerScript = flower.GetComponent<Flowerer>();
             flowerScript.Randomize();
             flowerScript.adult = true;
-
+            
+            
         }
 
         // create m empty small pots
@@ -51,10 +55,10 @@ public class ControlInterface : MonoBehaviour
         step = (rightBound.x - leftBound.x) / (m - 1);
         for (int i = 0; i < m; i++)
         {
-            GameObject flowerpot = new GameObject("small pot"+i);
-            flowerpot.transform.position = leftBound + new Vector3(step * i, 0);
+            GameObject flowerpot = Instantiate(potPrefab, leftBound + new Vector3(step * i, 0), Quaternion.identity);
+            flowerpot.name = "tinyPot" + (i + 1);
             flowerpot.transform.localScale = new Vector3(0.75f, 0.75f, 0.75f);
-            smallPots.Add(flowerpot);
+            smallPots.Add(flowerpot.GetComponent<PotLabel>());
             empty.Enqueue(i);
         }
     }
@@ -86,10 +90,9 @@ public class ControlInterface : MonoBehaviour
                     {
                         int freePot = empty.Dequeue();
                         GameObject offspring = Instantiate(flowerPrefab, smallPots[freePot].transform, false);
-                        print("mutating flower in " + flower.transform.parent.name);
-                        // ---- TODO set mutant offspring parameters 
+                        print("mutating flower in " + flower.transform.parent.name);                       
                         offspring.GetComponent<Flowerer>().MutateFrom(flower);
-                        // ----
+                        smallPots[freePot].SetLabel(flower.transform.parent.name+"*");                        
                     }
                 }
 
@@ -108,6 +111,8 @@ public class ControlInterface : MonoBehaviour
                         GameObject offspring = Instantiate(flowerPrefab, smallPots[freePot].transform, false);
                         print("crossing flowers in " + flower.transform.parent.name + " and " + firstCrossover.transform.parent.name);
                         offspring.GetComponent<Flowerer>().CrossoverFrom(flower, firstCrossover);
+                        string newLabel = firstCrossover.transform.parent.name + "+" + flower.transform.parent.name;
+                        smallPots[freePot].SetLabel(newLabel);
                         firstCrossover = null;
                     }
                     else print("can't cross flower with itself");
@@ -196,9 +201,9 @@ public class ControlInterface : MonoBehaviour
             if (!empty.Contains(i))
             {
                 Destroy(smallPots[i].GetComponentInChildren<Flowerer>().gameObject);
+                smallPots[i].SetLabel("");
                 empty.Enqueue(i);
             }
         }
-
     }
 }

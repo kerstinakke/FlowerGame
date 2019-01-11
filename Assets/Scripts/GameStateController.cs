@@ -7,8 +7,6 @@ public class GameStateController : MonoBehaviour
 {
     [SerializeField]
     private Button[] tools = new Button[2];
-    [SerializeField]
-    private Button switchState;
     private ControlInterface ci;
     private bool crossState; 
 
@@ -23,7 +21,7 @@ public class GameStateController : MonoBehaviour
        foreach(Button b in tools) {
             b.gameObject.SetActive(!crossState);
        }
-        if (crossState) ci.ActivateSelecter();
+       if (crossState) ci.ActivateSelecter();
         else {
             ci.KeepSelected();
             ci.DeactivateTools();
