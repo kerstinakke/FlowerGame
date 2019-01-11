@@ -118,6 +118,11 @@ public class ControlInterface : MonoBehaviour
                         flower.selected = true;
                         selected += 1;
                         flower.Transparent(true);
+                    } else if (flower.selected)
+                    {
+                        flower.selected = false;
+                        selected -= 1;
+                        flower.Transparent(false);
                     }
                     else print("selection limit reached or flower already selected");
                 }
