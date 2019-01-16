@@ -7,6 +7,7 @@ public class ControlInterface : MonoBehaviour
 {
     public int n = 2; // Survivor limit
     public int m = 3; // Offspring limit
+    public bool autoplay = false;
     [SerializeField]
     private GameObject flowerPrefab;
     [SerializeField]
@@ -71,7 +72,8 @@ public class ControlInterface : MonoBehaviour
     void Update()
     {
         // Handles interaction with flowers 
-        if (Input.GetMouseButtonDown(0)) {  
+        if (Input.GetMouseButtonDown(0)) {
+            if (autoplay) return;
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
@@ -92,14 +94,7 @@ public class ControlInterface : MonoBehaviour
                 {
                     if (empty.Count == 0) messages.text = "No more room";
                     else if (!flower.adult) messages.text = "This flower can not give offspring yet";
-                    else
-                    {
-                        int freePot = empty.Dequeue();
-                        GameObject offspring = Instantiate(flowerPrefab, smallPots[freePot].transform, false);
-                        print("mutating flower in " + flower.transform.parent.name);                       
-                        offspring.GetComponent<Flowerer>().MutateFrom(flower);
-                        smallPots[freePot].SetLabel(flower.transform.parent.name+"*");                        
-                    }
+                    else MakeMutant(flower);
                 }
 
                 // create crossover offspring
@@ -114,12 +109,7 @@ public class ControlInterface : MonoBehaviour
                     }
                     else if (!firstCrossover.Equals(flower)) // can't cross with self
                     {
-                        int freePot = empty.Dequeue();
-                        GameObject offspring = Instantiate(flowerPrefab, smallPots[freePot].transform, false);
-                        print("crossing flowers in " + flower.transform.parent.name + " and " + firstCrossover.transform.parent.name);
-                        offspring.GetComponent<Flowerer>().CrossoverFrom(flower, firstCrossover);
-                        string newLabel = firstCrossover.transform.parent.name + "+" + flower.transform.parent.name;
-                        smallPots[freePot].SetLabel(newLabel);
+                        MakeCrossover(firstCrossover, flower);
                         firstCrossover = null;
                     }
                     else messages.text = "Can't cross flower with itself";
@@ -140,6 +130,38 @@ public class ControlInterface : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void MakeCrossover(Flowerer parent1, Flowerer parent2)
+    {
+        if (parent1 == parent2) return;
+        int freePot = empty.Dequeue();
+        GameObject offspring = Instantiate(flowerPrefab, smallPots[freePot].transform, false);
+        print("crossing flowers in " + parent1.transform.parent.name + " and " + parent2.transform.parent.name);
+        offspring.GetComponent<Flowerer>().CrossoverFrom(parent1,parent2);
+        string newLabel = parent1.transform.parent.name + "+" + parent2.transform.parent.name;
+        smallPots[freePot].SetLabel(newLabel);
+    }
+
+    public void MakeMutant(Flowerer parent)
+    {
+        int freePot = empty.Dequeue();
+        GameObject offspring = Instantiate(flowerPrefab, smallPots[freePot].transform, false);
+        print("mutating flower in " + parent.transform.parent.name);
+        offspring.GetComponent<Flowerer>().MutateFrom(parent);
+        smallPots[freePot].SetLabel(parent.transform.parent.name + "*");
+    }
+
+    public Flowerer GetFlower(int pot, bool assertAdult=false) {
+        if (pot < n)
+        {
+            return bigPots[pot].GetComponentInChildren<Flowerer>();
+        }
+        else if (pot < m + n && !assertAdult)
+        {
+            return smallPots[pot - n].GetComponentInChildren<Flowerer>();
+        }
+        else throw new UnityException("invalid pot index");
     }
 
     public void ActivateMutater() {
@@ -171,46 +193,33 @@ public class ControlInterface : MonoBehaviour
 
     public void KeepSelected()
     {
-        int free = 0;
-        int lastSmall = 0;
-        while (selected > 0 && lastSmall < m)
-        {
-            if (bigPots[free].GetComponentInChildren<Flowerer>().selected)
-            {
-                bigPots[free].GetComponentInChildren<Flowerer>().Reset();
-                free += 1;
-                selected -= 1;
-            }
-            else {
-                Flowerer flower = smallPots[lastSmall].GetComponentInChildren<Flowerer>(); 
-                while ((flower==null  || !flower.selected) && lastSmall < m-1){
-                    print(lastSmall);
-                    lastSmall += 1;
-                    flower = smallPots[lastSmall].GetComponentInChildren<Flowerer>();
-                }
-                if (flower == null) break;
-                // switch an unselected flower in big pot with a selected small flower
-                Destroy(bigPots[free].GetComponentInChildren<Flowerer>().gameObject);
-                GameObject repotted = Instantiate(flowerPrefab, bigPots[free].transform, false);
-                repotted.GetComponent<Flowerer>().CopyFrom(flower);
-                repotted.GetComponent<Flowerer>().adult = true;
-                lastSmall += 1;
-                free += 1;
-                selected -= 1;
-            }
-            
-        }
-        for (int i = free; i < n; i++) { // reset all remaining big flowers
-            bigPots[i].GetComponentInChildren<Flowerer>().Reset();
-        }
+        int free = 0;       
         for (int i = 0; i < m; i++) // empty all small pots
         {
             if (!empty.Contains(i))
             {
-                Destroy(smallPots[i].GetComponentInChildren<Flowerer>().gameObject);
+                Flowerer flower = smallPots[i].GetComponentInChildren<Flowerer>();
+                if (flower.selected)
+                {
+                    // switch selected small flower with an unselected flower in big pot
+                    while (free < n && bigPots[free].GetComponentInChildren<Flowerer>().selected)
+                    {
+                        free += 1;
+                    }
+                    Destroy(bigPots[free].GetComponentInChildren<Flowerer>().gameObject);
+                    GameObject repotted = Instantiate(flowerPrefab, bigPots[free].transform, false);
+                    repotted.GetComponent<Flowerer>().CopyFrom(flower);
+                    repotted.GetComponent<Flowerer>().adult = true;
+                    free += 1;
+                }
+                Destroy(flower.gameObject);
                 smallPots[i].SetLabel("");
                 empty.Enqueue(i);
             }
         }
+        for (int i = 0; i < n; i++) {
+            bigPots[i].GetComponentInChildren<Flowerer>().Reset();
+        } 
     }
+
 }
