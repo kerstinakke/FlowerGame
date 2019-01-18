@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Flowerer : MonoBehaviour
@@ -60,6 +61,15 @@ public class Flowerer : MonoBehaviour
         petalGene = GeneCombiner.randomGene();
     }
 
+    public void MakeTarget()
+    {
+        redGene = GeneCombiner.targetGene();
+        blueGene = GeneCombiner.targetGene();
+        greenGene = GeneCombiner.targetGene();
+        heightGene = GeneCombiner.targetGene();
+        petalGene = GeneCombiner.targetGene();
+    }
+
     public void CrossoverFrom(Flowerer p, Flowerer q)
     {
         redGene = GeneCombiner.cross(p.redGene, q.redGene);
@@ -94,7 +104,8 @@ public class Flowerer : MonoBehaviour
         }
     }
 
-    public void CopyFrom(Flowerer original) {
+    public void CopyFrom(Flowerer original) 
+    {
         redGene = original.redGene;
         blueGene = original.blueGene;
         greenGene = original.greenGene;
@@ -102,7 +113,8 @@ public class Flowerer : MonoBehaviour
         petalGene = original.petalGene;
     }
 
-    public void Transparent(bool setTransparent) {
+    public void Transparent(bool setTransparent) 
+    {
         foreach (Renderer r in GetComponentsInChildren<Renderer>())
         {
             Color c = r.material.color;
@@ -114,5 +126,18 @@ public class Flowerer : MonoBehaviour
     {
         Transparent(false);
         selected = false;
+    }
+    
+    const float HEIGHT_TRESH = 0.01f;
+    const int PETAL_TRESH = 0;
+    const float COLOR_TRESH = 0.1f;
+    public bool similarTo (Flowerer other) 
+    {
+        float heightDist = Math.Abs(getHeight() - other.getHeight());
+        int petalDist = Math.Abs(getPetalNum() - other.getPetalNum());
+        float colorDist = Math.Max(Math.Abs(getColor().r - other.getColor().r),
+                           Math.Max(Math.Abs(getColor().b - other.getColor().b),
+                                    Math.Abs(getColor().g - other.getColor().g)));
+        return (heightDist <= HEIGHT_TRESH) && (petalDist <= PETAL_TRESH) && (colorDist <= COLOR_TRESH);
     }
 }

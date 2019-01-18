@@ -32,6 +32,28 @@ public class GeneCombiner {
         
         return result;
     }
+    
+    const double TARGET_PROB = 0.2f;
+    public static Gene targetGene()
+    {
+        // genes of target flowers should be "extreme"
+        Gene result = new Gene();
+        result.dna = new bool [GENE_W];
+        
+        for (int i = 0; i < GENE_W; i++) {
+            if (rng.NextDouble() < TARGET_PROB) {
+                result.dna[i] = true;   
+            }
+        }
+        
+        if (rng.Next(0, 2) == 0) {
+            for (int i = 0; i < GENE_W; i++) {
+                result.dna[i] = !result.dna[i];
+            }
+        }
+        
+        return result;
+    }
 
     public static Gene cross(Gene p, Gene q)
     {
