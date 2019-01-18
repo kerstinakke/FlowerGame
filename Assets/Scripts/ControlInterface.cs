@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class ControlInterface : MonoBehaviour
 {
+    public Flowerer target;
     public int n = 2; // Survivor limit
     public int m = 3; // Offspring limit
     public bool autoplay = false;
@@ -50,9 +51,7 @@ public class ControlInterface : MonoBehaviour
             GameObject flower = Instantiate(flowerPrefab,flowerpot.transform,false);
             Flowerer flowerScript = flower.GetComponent<Flowerer>();
             flowerScript.Randomize();
-            flowerScript.adult = true;
-            
-            
+            flowerScript.adult = true; 
         }
 
         // create m empty small pots
@@ -66,6 +65,14 @@ public class ControlInterface : MonoBehaviour
             smallPots.Add(flowerpot.GetComponent<PotLabel>());
             empty.Enqueue(i);
         }
+
+        // create the target
+        GameObject pot = Instantiate(potPrefab, cam.ViewportToWorldPoint(new Vector3(0.08f, 0.6f, z)), Quaternion.identity);
+        pot.name = "Target";
+        pot.GetComponent<PotLabel>().SetLabel("Target");
+        target = Instantiate(flowerPrefab, pot.transform, false).GetComponent<Flowerer>();
+        target.MakeTarget();
+
     }
 
     // Update is called once per frame
@@ -93,7 +100,7 @@ public class ControlInterface : MonoBehaviour
                 if (activeTool == Tools.Mutater)
                 {
                     if (empty.Count == 0) messages.text = "No more room";
-                    else if (!flower.adult) messages.text = "This flower can not give offspring yet";
+                    else if (!flower.adult) messages.text = "This flower can not give offspring";
                     else MakeMutant(flower);
                 }
 
@@ -101,7 +108,7 @@ public class ControlInterface : MonoBehaviour
                 else if (activeTool == Tools.Crosser)
                 {
                     if (empty.Count == 0) messages.text = "No more room";
-                    else if (!flower.adult) messages.text = "This flower can not give offspring yet";
+                    else if (!flower.adult) messages.text = "This flower can not give offspring";
                     else if (firstCrossover == null)
                     {
                         firstCrossover = flower;
