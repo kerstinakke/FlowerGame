@@ -16,6 +16,8 @@ public class ControlInterface : MonoBehaviour
     [SerializeField]
     private Texture2D crosserCursor;
     [SerializeField]
+    private Texture2D crosserCursor2;
+    [SerializeField]
     private Texture2D mutaterSprite;
 
     private enum Tools { None, Mutater, Crosser, Selecter };
@@ -113,11 +115,13 @@ public class ControlInterface : MonoBehaviour
                     {
                         firstCrossover = flower;
                         print("selected flower in " + flower.transform.parent.name);
+                        Cursor.SetCursor(crosserCursor2, new Vector2(0, 0), CursorMode.ForceSoftware);
                     }
                     else if (!firstCrossover.Equals(flower)) // can't cross with self
                     {
                         MakeCrossover(firstCrossover, flower);
                         firstCrossover = null;
+                        Cursor.SetCursor(crosserCursor, new Vector2(0, 0), CursorMode.ForceSoftware);
                     }
                     else messages.text = "Can't cross flower with itself";
                 }
@@ -182,7 +186,7 @@ public class ControlInterface : MonoBehaviour
         firstCrossover = null;
         activeTool = Tools.Crosser;
         print("crossover tool active");
-        Cursor.SetCursor(crosserCursor,new Vector2(0,0),CursorMode.Auto);
+        Cursor.SetCursor(crosserCursor,new Vector2(0,0), CursorMode.ForceSoftware);
     }
 
     public void ActivateSelecter()
