@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ControlInterface : MonoBehaviour
 {
@@ -42,8 +43,8 @@ public class ControlInterface : MonoBehaviour
 
         // create and fill n big pots
         float z = cam.nearClipPlane +5;
-        Vector3 rightBound = cam.ViewportToWorldPoint(new Vector3(0.9f, 0.6f, z));
-        Vector3 leftBound = cam.ViewportToWorldPoint(new Vector3(0.25f, 0.6f, z));
+        Vector3 rightBound = cam.ViewportToWorldPoint(new Vector3(0.9f, 0.5f, z));
+        Vector3 leftBound = cam.ViewportToWorldPoint(new Vector3(0.25f, 0.5f, z));
         float step = (rightBound.x - leftBound.x) / (n-1);
         for (int i = 0; i < n; i++) {
             GameObject flowerpot = Instantiate(potPrefab, leftBound + new Vector3(step * i, 0),Quaternion.identity);
@@ -69,7 +70,7 @@ public class ControlInterface : MonoBehaviour
         }
 
         // create the target
-        GameObject pot = Instantiate(potPrefab, cam.ViewportToWorldPoint(new Vector3(0.08f, 0.6f, z)), Quaternion.identity);
+        GameObject pot = Instantiate(potPrefab, cam.ViewportToWorldPoint(new Vector3(0.08f, 0.5f, z)), Quaternion.identity);
         pot.name = "Target";
         pot.GetComponent<PotLabel>().SetLabel("Target");
         target = Instantiate(flowerPrefab, pot.transform, false).GetComponent<Flowerer>();
@@ -200,6 +201,11 @@ public class ControlInterface : MonoBehaviour
     public void DeactivateTools()
     {
         activeTool = Tools.None;
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void KeepSelected()
