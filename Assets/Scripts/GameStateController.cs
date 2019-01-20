@@ -73,8 +73,8 @@ public class GameStateController : MonoBehaviour
                 bestFlowers = bestFlowers.OrderBy(x => ci.GetFlower(x, true).DistanceFrom(ci.target)).ToList();
                     
                 int chooseFromBest = ci.n;
-
-                for (int k = 0; k < ci.m; k++)
+                int free = ci.GetEmptySmalls();
+                for (int k = 0; k < free; k++)
                 {
                     if (Random.value < 0.5) 
                     {
@@ -92,20 +92,8 @@ public class GameStateController : MonoBehaviour
                         int p1 = Random.Range(0, chooseFromBest);
                         ci.MakeMutant(ci.GetFlower(p1, true));
                     }
-                    yield return new WaitForSeconds(0.3f);
+                    yield return new WaitForSeconds(0.2f);
                     
-                    /*
-                    int p1 = Random.Range(0, ci.n);
-                    if (Random.value < 0.5)
-                    {
-                        int p2 = p1;
-                        while (p2 == p1) { p2 = Random.Range(0, ci.n); }
-                        ci.MakeCrossover(ci.GetFlower(p1, true), ci.GetFlower(p2, true));
-
-                    }
-                    else ci.MakeMutant(ci.GetFlower(p1, true));
-                    yield return new WaitForSeconds(0.3f);
-                    */
                 }
             }
             else

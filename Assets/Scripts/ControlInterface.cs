@@ -20,6 +20,8 @@ public class ControlInterface : MonoBehaviour
     private Texture2D crosserCursor2;
     [SerializeField]
     private Texture2D mutaterSprite;
+    [SerializeField]
+    private GameObject restartButton;
 
     private enum Tools { None, Mutater, Crosser, Selecter };
     [SerializeField]
@@ -29,7 +31,7 @@ public class ControlInterface : MonoBehaviour
     private List<PotLabel> smallPots = new List<PotLabel>();
     private Queue<int> empty = new Queue<int>();
     private Flowerer firstCrossover;
-    private int selected = 0;
+    public int selected { get; private set; } = 0;
     private Text messages;
     
 
@@ -206,6 +208,13 @@ public class ControlInterface : MonoBehaviour
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        restartButton.SetActive(false);
+    }
+
+    public int GetEmptySmalls()
+    {
+        print(empty.Count);
+        return empty.Count;
     }
 
     public void KeepSelected()
@@ -245,6 +254,7 @@ public class ControlInterface : MonoBehaviour
                 if (autoplay) {
                     gameObject.GetComponent<GameStateController>().SwitchAutoplay();
                 }
+                restartButton.SetActive(true);
             }
         }
     }
