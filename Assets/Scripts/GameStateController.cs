@@ -101,11 +101,14 @@ public class GameStateController : MonoBehaviour
                 List<int> bestFlowers = new List<int>();
                 for (int i = 0; i < ci.n + ci.m; i++) 
                 {
-                    bestFlowers.Add(i);
+                    if (ci.GetFlower(i, false) != null)
+                    {
+                        bestFlowers.Add(i);
+                    }
                 }
                 bestFlowers = bestFlowers.OrderBy(x => ci.GetFlower(x, false).DistanceFrom(ci.target)).ToList();
 
-                for (int i = 0; i < ci.n; i++)
+                for (int i = 0; i < ci.n - ci.selected; i++)
                 {
                     int index = bestFlowers[i];
                     Flowerer flower = ci.GetFlower(index);

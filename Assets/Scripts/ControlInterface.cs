@@ -175,7 +175,7 @@ public class ControlInterface : MonoBehaviour
         {
             return smallPots[pot - n].GetComponentInChildren<Flowerer>();
         }
-        else throw new UnityException("invalid pot index");
+        else return null;
     }
 
     public void ActivateMutater() {

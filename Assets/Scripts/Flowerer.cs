@@ -130,7 +130,7 @@ public class Flowerer : MonoBehaviour
     
     const float HEIGHT_TRESH = 0.2f;
     const int PETAL_TRESH = 0;
-    const float COLOR_TRESH = 0.1f;
+    const float COLOR_TRESH = 0.08f;
     public bool SimilarTo (Flowerer other) 
     {
         float heightDist = Math.Abs(getHeight() - other.getHeight());
