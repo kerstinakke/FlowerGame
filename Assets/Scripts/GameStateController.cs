@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -64,8 +65,36 @@ public class GameStateController : MonoBehaviour
         {
             if (crossState)
             {
-                for (int i = 0; i < ci.m; i++)
+                List<int> bestFlowers = new List<int>();
+                for (int i = 0; i < ci.n; i++) 
                 {
+                    bestFlowers.Add(i);
+                }
+                bestFlowers = bestFlowers.OrderBy(x => ci.GetFlower(x, true).DistanceFrom(ci.target)).ToList();
+                    
+                int chooseFromBest = ci.n;
+
+                for (int k = 0; k < ci.m; k++)
+                {
+                    if (Random.value < 0.5) 
+                    {
+                        int p1 = Random.Range(0, chooseFromBest);
+                        int p2 = p1;
+                        while (p2 == p1) 
+                        {
+                            p2 = Random.Range(0, chooseFromBest);
+                        }
+                        
+                        ci.MakeCrossover(ci.GetFlower(p1, true), ci.GetFlower(p2, true));
+                    } 
+                    else 
+                    {
+                        int p1 = Random.Range(0, chooseFromBest);
+                        ci.MakeMutant(ci.GetFlower(p1, true));
+                    }
+                    yield return new WaitForSeconds(0.3f);
+                    
+                    /*
                     int p1 = Random.Range(0, ci.n);
                     if (Random.value < 0.5)
                     {
@@ -76,24 +105,29 @@ public class GameStateController : MonoBehaviour
                     }
                     else ci.MakeMutant(ci.GetFlower(p1, true));
                     yield return new WaitForSeconds(0.3f);
+                    */
                 }
             }
             else
             {
+                List<int> bestFlowers = new List<int>();
+                for (int i = 0; i < ci.n + ci.m; i++) 
+                {
+                    bestFlowers.Add(i);
+                }
+                bestFlowers = bestFlowers.OrderBy(x => ci.GetFlower(x, false).DistanceFrom(ci.target)).ToList();
 
                 for (int i = 0; i < ci.n; i++)
                 {
-                    int take = Random.Range(i, flowerpots.Count);
-                    int index = flowerpots[take];
+                    int index = bestFlowers[i];
                     Flowerer flower = ci.GetFlower(index);
                     flower.selected=true;
                     flower.Transparent(true);
-                    flowerpots[take] = flowerpots[i];
-                    flowerpots[i] = index;
                     yield return new WaitForSeconds(0.2f);
                 }
             }
             Switch();
+            yield return new WaitForSeconds(0.01f);
         }
     }
 }

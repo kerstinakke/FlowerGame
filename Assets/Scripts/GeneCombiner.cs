@@ -68,6 +68,13 @@ public class GeneCombiner {
             }
         }
     
+        // shuffle the gene
+        for (int i = GENE_W - 1; i > 0; i--) {
+            int swapWith = rng.Next(0, i);
+            bool temp = result.dna[i];
+            result.dna[i] = result.dna[swapWith];
+            result.dna[swapWith] = temp;
+        }
         return result;
     }
 
@@ -85,6 +92,13 @@ public class GeneCombiner {
             }
         }
         
+        // shuffle the gene
+        for (int i = GENE_W - 1; i > 0; i--) {
+            int swapWith = rng.Next(0, i);
+            bool temp = result.dna[i];
+            result.dna[i] = result.dna[swapWith];
+            result.dna[swapWith] = temp;
+        }
         return result;
     }
 }

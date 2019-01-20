@@ -128,10 +128,10 @@ public class Flowerer : MonoBehaviour
         selected = false;
     }
     
-    const float HEIGHT_TRESH = 0.01f;
-    const int PETAL_TRESH = 0;
+    const float HEIGHT_TRESH = 0.2f;
+    const int PETAL_TRESH = 3;
     const float COLOR_TRESH = 0.1f;
-    public bool similarTo (Flowerer other) 
+    public bool SimilarTo (Flowerer other) 
     {
         float heightDist = Math.Abs(getHeight() - other.getHeight());
         int petalDist = Math.Abs(getPetalNum() - other.getPetalNum());
@@ -139,5 +139,15 @@ public class Flowerer : MonoBehaviour
                            Math.Max(Math.Abs(getColor().b - other.getColor().b),
                                     Math.Abs(getColor().g - other.getColor().g)));
         return (heightDist <= HEIGHT_TRESH) && (petalDist <= PETAL_TRESH) && (colorDist <= COLOR_TRESH);
+    }
+    
+    public float DistanceFrom (Flowerer other)
+    {
+        float heightDist = Math.Abs(getHeight() - other.getHeight()) / (2.5f - 1f);
+        float petalDist = Math.Abs(getPetalNum() - other.getPetalNum()) / 12f;
+        float colorDist = Math.Max(Math.Abs(getColor().r - other.getColor().r),
+                           Math.Max(Math.Abs(getColor().b - other.getColor().b),
+                                    Math.Abs(getColor().g - other.getColor().g)));
+        return heightDist + petalDist + 5 * colorDist;
     }
 }

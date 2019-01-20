@@ -236,7 +236,17 @@ public class ControlInterface : MonoBehaviour
         }
         for (int i = 0; i < n; i++) {
             bigPots[i].GetComponentInChildren<Flowerer>().Reset();
-        } 
+        }
+        
+        // check if we have a winner
+        for (int i = 0; i < n; i++) {
+            if (bigPots[i].GetComponentInChildren<Flowerer>().SimilarTo(target)) {
+                messages.text = "You win! Flower pot " + (i + 1) + " has reached the target!";
+                if (autoplay) {
+                    gameObject.GetComponent<GameStateController>().SwitchAutoplay();
+                }
+            }
+        }
     }
 
 }
